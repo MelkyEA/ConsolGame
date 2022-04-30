@@ -3,9 +3,8 @@ package consolGame.actions;
 import consolGame.players.AI;
 import consolGame.players.Human;
 import consolGame.units.AbstractUnit;
-import consolGame.units.Archer;
-import consolGame.units.Warrior;
-import consolGame.units.Wizard;
+import consolGame.utils.factory.UnitsFactory;
+import consolGame.utils.factory.UnitsType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,45 +12,50 @@ import java.util.Scanner;
 
 public class PreBattle {
 
-    private final List<AbstractUnit> units = new ArrayList<>();
 
     public PreBattle() {
-        units.add(new Warrior(250, 90, "Воин"));
-        units.add(new Archer(130, 75, "Лучник"));
-        units.add(new Wizard(210, 50, "Маг"));
         initialisation();
     }
 
     private void initialisation() {
-        System.out.println("Введите номер  бойца, которого хотите добавить:");
+        System.out.println("Список доступных юнитов");
 
-        Scanner sc = new Scanner(System.in);
+        for (int i = 0; i < UnitsType.values().length; i++) {
+            UnitsType type = UnitsType.values()[i];
+
+            System.out.print((i + 1) + "." + type.getType() + " ");
+            if (i == UnitsType.values().length - 1)
+                System.out.println();
+        }
+
 
         List<AbstractUnit> unitsHuman = new ArrayList<>();
-        AbstractUnit unitHuman = units.get(sc.nextInt() - 1);
-        unitHuman.setTeam(unitsHuman);
-        unitsHuman.add(unitHuman);
-        unitHuman = units.get(sc.nextInt() - 1);
-        unitHuman.setTeam(unitsHuman);
-        unitsHuman.add(unitHuman);
-        unitHuman = units.get(sc.nextInt() - 1);
-        unitHuman.setTeam(unitsHuman);
-        unitsHuman.add(unitHuman);
+        addUnits(unitsHuman, 3, true);
         Human human = new Human(unitsHuman, "Ты");
 
         List<AbstractUnit> unitsAI = new ArrayList<>();
-        AbstractUnit unitAi = units.get(0);
-        unitAi.setTeam(unitsAI);
-        unitsAI.add(unitAi);
-        unitAi = units.get(1);
-        unitAi.setTeam(unitsAI);
-        unitsAI.add(unitAi);
-        unitAi = units.get(2);
-        unitAi.setTeam(unitsAI);
-        unitsAI.add(unitAi);
+        addUnits(unitsAI, 3, false);
         AI ai = new AI(unitsAI, "Противник");
 
         Battle battle = new Battle(human, ai);
         battle.fight();
+    }
+
+    private void addUnits(List<AbstractUnit> unitList, int size, boolean isHuman) {
+        Scanner sc = new Scanner(System.in);
+        UnitsFactory factory = new UnitsFactory();
+
+        for (int i = 0; i < size; i++) {
+            int number;
+            if (isHuman) {
+                System.out.println("Введи номер " + (i + 1) + " юнита:");
+                number = sc.nextInt() - 1;
+            } else {
+                number = i;
+            }
+            AbstractUnit unit = factory.createUnit(UnitsType.values()[number]);
+            unit.setTeam(unitList);
+            unitList.add(unit);
+        }
     }
 }

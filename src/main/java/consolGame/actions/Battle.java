@@ -46,6 +46,10 @@ public class Battle {
             } else {
                 System.out.println("Противник атакует тебя!");
 
+                if (indexAiUnit >= aiUnits.size()) {
+                    indexAiUnit = 0;
+                }
+
                 AbstractUnit unit = aiUnits.get(indexAiUnit++);
                 setupDuel(unit, AI.chooseTarget(humanUnits, unit));
 
@@ -76,9 +80,19 @@ public class Battle {
                 }
 
                 System.out.print((i + 1) + "." + humanUnitString);
+            } else {
+                StringBuilder spaces = new StringBuilder(" ");
+                while (spaces.length() < sizeOfString + 2) {
+                    spaces.append(" ");
+                }
+                System.out.print(spaces);
             }
             if (i <= sizeAiUnits - 1) {
                 System.out.println((i + 1) + "." + aiUnits.get(i));
+            } else {
+                System.out.println(
+
+                );
             }
 
         }
