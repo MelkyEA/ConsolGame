@@ -1,10 +1,16 @@
 package consolGame.units;
 
+import consolGame.players.AbstractPlayer;
+
+import java.util.List;
+
 public class Wizard extends AbstractUnit {
-    public Wizard(int hp, int damage, String name) {
+    public Wizard(int hp, int damage, String name, List<AbstractUnit> team, AbstractPlayer controller) {
         this.hp = hp;
         this.damage = damage;
         this.name = name;
+        this.team = team;
+        this.controller = controller;
     }
 
     @Override

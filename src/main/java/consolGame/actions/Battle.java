@@ -4,18 +4,23 @@ import consolGame.players.AI;
 import consolGame.players.AbstractPlayer;
 import consolGame.players.Human;
 import consolGame.units.AbstractUnit;
+import consolGame.utils.Interface;
+import lombok.Data;
 
 import java.util.List;
-import java.util.Scanner;
 
+@Data
 public class Battle {
 
     private final Human human;
     private final AI ai;
+    private final Interface anInterface;
+    private int indexAiUnit = 0;
 
-    public Battle(Human human, AI ai) {
+    public Battle(Human human, AI ai, Interface anInterface) {
         this.human = human;
         this.ai = ai;
+        this.anInterface = anInterface;
     }
 
     public void fight() {
@@ -23,22 +28,21 @@ public class Battle {
     }
 
     public void getBattle(List<AbstractUnit> humanUnits, List<AbstractUnit> aiUnits) {
-        int indexAiUnit = 0;
         AbstractPlayer attacker = human;
 
         while (!humanUnits.isEmpty() && !aiUnits.isEmpty()) {
 
-            printTeams(humanUnits, aiUnits);
+            anInterface.printTeams(humanUnits, aiUnits);
 
             if (attacker instanceof Human) {
 
                 System.out.println("Ты атакуешь противника!");
 
-                Scanner sc = new Scanner(System.in);
                 System.out.println("Введи номер юнита, который будет атаковать:");
-                int indexUnitsHuman = sc.nextInt();
+                int indexUnitsHuman = anInterface.getIntFromScanner(humanUnits.size());
+
                 System.out.println("Введи номер юнита противника, который будет атакован:");
-                int indexEnemy = sc.nextInt();
+                int indexEnemy = anInterface.getIntFromScanner(aiUnits.size());
 
                 setupDuel(humanUnits.get(indexUnitsHuman - 1), aiUnits.get(indexEnemy - 1));
 
@@ -57,48 +61,7 @@ public class Battle {
             }
         }
 
-        checkWinner(human, ai);
-    }
-
-    private void printTeams(List<AbstractUnit> humanUnits, List<AbstractUnit> aiUnits) {
-        int sizeOfString = 30;
-        int sizeHumanUnits = humanUnits.size();
-        int sizeAiUnits = aiUnits.size();
-        int maxSize = Math.max(sizeHumanUnits, sizeAiUnits);
-
-        System.out.println("\nты:                             противник:");
-        System.out.println("__________________________________________");
-
-        for (int i = 0; i < maxSize; i++) {
-            StringBuilder humanUnitString;
-
-            if (i <= sizeHumanUnits - 1) {
-
-                humanUnitString = new StringBuilder(humanUnits.get(i).toString());
-                while (humanUnitString.length() < sizeOfString) {
-                    humanUnitString.append(" ");
-                }
-
-                System.out.print((i + 1) + "." + humanUnitString);
-            } else {
-                StringBuilder spaces = new StringBuilder(" ");
-                while (spaces.length() < sizeOfString + 2) {
-                    spaces.append(" ");
-                }
-                System.out.print(spaces);
-            }
-            if (i <= sizeAiUnits - 1) {
-                System.out.println((i + 1) + "." + aiUnits.get(i));
-            } else {
-                System.out.println(
-
-                );
-            }
-
-        }
-
-        System.out.println("__________________________________________\n");
-
+        anInterface.checkWinner(human, ai);
     }
 
     private void setupDuel(AbstractUnit attacker, AbstractUnit defender) {
@@ -142,20 +105,18 @@ public class Battle {
             }
 
             abstractUnit.getTeam().remove(abstractUnit);
+            if (abstractUnit.getController() instanceof AI)
+                decrementAiIndex();
             return false;
         } else {
             return true;
         }
     }
 
-    private void checkWinner(AbstractPlayer player1, AbstractPlayer player2) {
-        String winner;
-        if (player1.getUnits().isEmpty()) {
-            winner = player2.getName();
-        } else {
-            winner = player1.getName();
-        }
 
-        System.out.println(winner + " победил!");
+    private void decrementAiIndex() {
+        if (indexAiUnit != 0) {
+            indexAiUnit--;
+        }
     }
 }

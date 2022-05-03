@@ -1,10 +1,16 @@
 package consolGame.units;
 
+import consolGame.players.AbstractPlayer;
+
+import java.util.List;
+
 public class Archer extends AbstractUnit {
-    public Archer(int hp, int damage, String name) {
+    public Archer(int hp, int damage, String name, List<AbstractUnit> team, AbstractPlayer controller) {
         this.hp = hp;
         this.damage = damage;
         this.name = name;
+        this.team = team;
+        this.controller = controller;
     }
 
     @Override

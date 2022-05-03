@@ -1,5 +1,6 @@
 package consolGame.units;
 
+import consolGame.players.AbstractPlayer;
 import lombok.Data;
 
 import java.util.List;
@@ -10,6 +11,7 @@ public abstract class AbstractUnit {
     protected int damage;
     protected String name;
     protected List<AbstractUnit> team;
+    protected AbstractPlayer controller;
 
     public abstract int getTakenDamage(AbstractUnit enemyUnit);
 

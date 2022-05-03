@@ -1,16 +1,19 @@
 package consolGame.actions;
 
 import consolGame.players.AI;
+import consolGame.players.AbstractPlayer;
 import consolGame.players.Human;
 import consolGame.units.AbstractUnit;
+import consolGame.utils.Interface;
 import consolGame.utils.factory.UnitsFactory;
 import consolGame.utils.factory.UnitsType;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
 public class PreBattle {
+
+    private Interface anInterface = new Interface();
 
 
     public PreBattle() {
@@ -30,30 +33,30 @@ public class PreBattle {
 
 
         List<AbstractUnit> unitsHuman = new ArrayList<>();
-        addUnits(unitsHuman, 3, true);
         Human human = new Human(unitsHuman, "Ты");
+        addUnits(unitsHuman, 3, human);
+
 
         List<AbstractUnit> unitsAI = new ArrayList<>();
-        addUnits(unitsAI, 3, false);
         AI ai = new AI(unitsAI, "Противник");
+        addUnits(unitsAI, 3, ai);
 
-        Battle battle = new Battle(human, ai);
+        Battle battle = new Battle(human, ai, anInterface);
         battle.fight();
     }
 
-    private void addUnits(List<AbstractUnit> unitList, int size, boolean isHuman) {
-        Scanner sc = new Scanner(System.in);
+    private void addUnits(List<AbstractUnit> unitList, int size, AbstractPlayer controller) {
         UnitsFactory factory = new UnitsFactory();
 
         for (int i = 0; i < size; i++) {
             int number;
-            if (isHuman) {
+            if (controller instanceof Human) {
                 System.out.println("Введи номер " + (i + 1) + " юнита:");
-                number = sc.nextInt() - 1;
+                number = anInterface.getIntFromScanner(UnitsType.values().length) - 1;
             } else {
                 number = i;
             }
-            AbstractUnit unit = factory.createUnit(UnitsType.values()[number]);
+            AbstractUnit unit = factory.createUnit(UnitsType.values()[number], unitList, controller);
             unit.setTeam(unitList);
             unitList.add(unit);
         }
